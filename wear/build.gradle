@@ -1,0 +1,38 @@
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "24.0.0"
+
+    defaultConfig {
+        applicationId "com.fjc.weardemo"
+        minSdkVersion 20
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.android.support:wearable:2.0.0-alpha3'
+    compile 'com.google.android.gms:play-services-wearable:10.0.1'
+
+    compile 'com.android.support:multidex:1.0.1'
+
+    compile 'com.baoyz.pullrefreshlayout:library:1.2.0'
+
+    debugCompile 'com.antfortune.freeline:runtime:0.6.3'
+    releaseCompile 'com.antfortune.freeline:runtime-no-op:0.6.3'
+    testCompile 'com.antfortune.freeline:runtime-no-op:0.6.3'
+    compile project(path: ':library')
+}

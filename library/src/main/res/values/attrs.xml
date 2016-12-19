@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MyView">
+        <attr name="text" format="string" />
+        <attr name="color" format="color" />
+        <attr name="num" format="integer" />
+        <attr name="menuColor" format="color" />
+        <attr name="centerTextColor" format="color"/>
+        <attr name="selectMenuColor" format="color"/>
+        <attr name="menuTextColor" format="color"/>
+        <attr name="menuTextSize" format="dimension"/>
+        <attr name="centerTextSize" format="dimension"/>
+    </declare-styleable>
+
+</resources>
