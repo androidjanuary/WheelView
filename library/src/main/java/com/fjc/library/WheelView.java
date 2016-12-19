@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.support.annotation.Dimension;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,7 +25,7 @@ import android.widget.TextView;
 /**
  * Created by FJC on 2016/12/14.
  */
-public class MyView extends ViewGroup {
+public class WheelView extends ViewGroup {
 
     private String text;
     private int num;
@@ -103,17 +102,17 @@ public class MyView extends ViewGroup {
         }
     }
 
-    public MyView(Context context) {
+    public WheelView(Context context) {
         super(context, null);
 
     }
 
-    public MyView(Context context, AttributeSet attrs) {
+    public WheelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(attrs);
     }
 
-    public MyView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WheelView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(attrs);
     }
@@ -129,16 +128,16 @@ public class MyView extends ViewGroup {
         colors[5] = Color.parseColor("#0000ff");
         colors[6] = Color.parseColor("#b700ff");
 
-        TypedArray arr = getContext().obtainStyledAttributes(attrs, R.styleable.MyView);
-        text = arr.getString(R.styleable.MyView_text);
-        num = arr.getInteger(R.styleable.MyView_num, 4);
-        color = arr.getColor(R.styleable.MyView_color, Color.RED);
-        menuColor = arr.getColor(R.styleable.MyView_menuColor, Color.WHITE);
-        menuTextColor = arr.getColor(R.styleable.MyView_menuTextColor, Color.BLACK);
-        selectMenuTextColor = arr.getColor(R.styleable.MyView_selectMenuColor, Color.GREEN);
-        centerTextColor = arr.getColor(R.styleable.MyView_centerTextColor, Color.BLACK);
-        menuTextSize = arr.getDimension(R.styleable.MyView_menuTextSize, 12);
-        centerTextSize = arr.getDimension(R.styleable.MyView_centerTextSize, 15);
+        TypedArray arr = getContext().obtainStyledAttributes(attrs, R.styleable.WheelView);
+        text = arr.getString(R.styleable.WheelView_text);
+        num = arr.getInteger(R.styleable.WheelView_num, 4);
+        color = arr.getColor(R.styleable.WheelView_color, Color.RED);
+        menuColor = arr.getColor(R.styleable.WheelView_menuColor, Color.WHITE);
+        menuTextColor = arr.getColor(R.styleable.WheelView_menuTextColor, Color.BLACK);
+        selectMenuTextColor = arr.getColor(R.styleable.WheelView_selectMenuColor, Color.GREEN);
+        centerTextColor = arr.getColor(R.styleable.WheelView_centerTextColor, Color.BLACK);
+        menuTextSize = arr.getDimension(R.styleable.WheelView_menuTextSize, 12);
+        centerTextSize = arr.getDimension(R.styleable.WheelView_centerTextSize, 15);
 
         centerTextView = new TextView(getContext());
         centerTextView.setText(text);
@@ -256,7 +255,7 @@ public class MyView extends ViewGroup {
             }
         }
         // 旋转动画
-        ObjectAnimator animator1 = ObjectAnimator.ofFloat(MyView.this, "angle", angle, angle2);
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(WheelView.this, "angle", angle, angle2);
 
 //        // 计算颜色渐变顺序
 //        int tmp[] = getColors(angle, angle2);
@@ -506,7 +505,7 @@ public class MyView extends ViewGroup {
             colorAnimator.cancel();
         }
         colorAnimator =
-                ObjectAnimator.ofInt(MyView.this, "color", colors);
+                ObjectAnimator.ofInt(WheelView.this, "color", colors);
         colorAnimator.setEvaluator(new ArgbEvaluator());
         colorAnimator.setDuration(colorDuration);
         colorAnimator.start();

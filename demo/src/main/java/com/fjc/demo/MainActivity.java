@@ -1,20 +1,14 @@
 package com.fjc.demo;
 
-import android.animation.AnimatorSet;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.animation.AnimationSet;
 
-import com.fjc.library.MyView;
+import com.fjc.library.WheelView;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private MyView myView;
+    private WheelView wheelView;
 
     int i = 0;
 
@@ -28,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        myView = (MyView) findViewById(R.id.myView);
+        wheelView = (WheelView) findViewById(R.id.myView);
 
         final int colors[] = new int[7];
         colors[0] = getResources().getColor(R.color.red);
@@ -39,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         colors[5] = getResources().getColor(R.color.blue);
         colors[6] = getResources().getColor(R.color.purple);
 
-        myView.setColorDuration(500);
-        myView.setOnCheckListener(new MyView.OnCheckListener() {
+        wheelView.setColorDuration(500);
+        wheelView.setOnCheckListener(new WheelView.OnCheckListener() {
             @Override
             public void onCheck(int position) {
                 new Thread(new Runnable() {
@@ -58,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 //                                int[] arr = new int[2];
 //                                arr[0] = Color.parseColor("#ffffff");
 //                                arr[1] = Color.parseColor("#000000");
-                                myView.startColorAnimation(colors[i%7]);
+                                wheelView.startColorAnimation(colors[i%7]);
                             }
                         });
                     }

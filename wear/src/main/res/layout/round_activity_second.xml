@@ -10,7 +10,7 @@
     tools:deviceIds="wear_round">
 
 
-    <com.fjc.library.MyView
+    <com.fjc.library.WheelView
         android:layout_centerInParent="true"
         android:id="@+id/myView"
         android:layout_width="match_parent"
@@ -66,5 +66,5 @@
             android:padding="10dp"
             android:textColor="@android:color/black"
             android:text="选项6" />
-    </com.fjc.library.MyView>
+    </com.fjc.library.WheelView>
 </RelativeLayout>
