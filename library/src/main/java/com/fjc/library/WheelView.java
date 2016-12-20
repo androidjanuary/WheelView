@@ -27,14 +27,21 @@ import android.widget.TextView;
  */
 public class WheelView extends ViewGroup {
 
+    // 指示器文字
     private String text;
+
+    // 选项数
     private int num;
+    // 指示器颜色
     private int color;
+    // 菜单背景色
     private int menuColor;
 
     //颜色渐变动画
     ObjectAnimator colorAnimator;
+    // WheelView宽度
     private int witdh;
+    // WheelView高度
     private int height;
 
     // 指示器角度 右边水平为0度 顺时针计算.
@@ -42,11 +49,12 @@ public class WheelView extends ViewGroup {
 
     //偏移量,用于计算产生扇形缝隙
     int delta = 10;
-    // 大圆系数
+    // 扇形半径系数,设为0.9,是为了给缝隙留一点偏移空间.
     double r1_xishu = 0.9;
     // 指示器半径系数
-    double r2_xishu = 0.5;
+    double r2_xishu = 0.4;
 
+    // 选择的id
     int checkId = 0;
 
     OnCheckListener listener;
@@ -57,29 +65,32 @@ public class WheelView extends ViewGroup {
     int colorDuration = 500;
     //居中的textview
     TextView centerTextView;
-    final int colors[] = new int[7];
 
+    // 菜单名
     String menuString[];
+    // 菜单图标
     int menuImg[];
-
 
     //sp
     float menuTextSize;
     float centerTextSize;
-    int menuTextColor;
-    int selectMenuTextColor;
-
-
     int centerTextColor;
+    int menuTextColor;
+    int selectedMenuColor;
 
+
+    public void setText(String text) {
+        this.text = text;
+        centerTextView.setText(text);
+    }
 
     public void setCenterTextColor(int centerTextColor) {
         this.centerTextColor = centerTextColor;
         centerTextView.setTextColor(centerTextColor);
     }
 
-    public void setSelectMenuTextColor(int selectMenuTextColor) {
-        this.selectMenuTextColor = selectMenuTextColor;
+    public void setSelectedMenuColor(int selectedMenuColor) {
+        this.selectedMenuColor = selectedMenuColor;
     }
 
     public void setCenterTextSize(float centerTextSize) {
@@ -91,14 +102,14 @@ public class WheelView extends ViewGroup {
     public void setMenuTextColor(int menuTextColor) {
         this.menuTextColor = menuTextColor;
         for (int i = 0; i < num; i++) {
-            setMenuTextType(getChildAt(i));
+            setMenuTextType(getChildAt(i + 1));
         }
     }
 
     public void setMenuTextSize(float menuTextSize) {
         this.menuTextSize = menuTextSize;
         for (int i = 0; i < num; i++) {
-            setMenuTextType(getChildAt(i));
+            setMenuTextType(getChildAt(i + 1));
         }
     }
 
@@ -120,13 +131,6 @@ public class WheelView extends ViewGroup {
 
     private void initView(AttributeSet attrs) {
         Log.v("info", "initView");
-        colors[0] = Color.parseColor("#FF0000");
-        colors[1] = Color.parseColor("#ff8800");
-        colors[2] = Color.parseColor("#ffff00");
-        colors[3] = Color.parseColor("#00ff00");
-        colors[4] = Color.parseColor("#00ffff");
-        colors[5] = Color.parseColor("#0000ff");
-        colors[6] = Color.parseColor("#b700ff");
 
         TypedArray arr = getContext().obtainStyledAttributes(attrs, R.styleable.WheelView);
         text = arr.getString(R.styleable.WheelView_text);
@@ -134,13 +138,13 @@ public class WheelView extends ViewGroup {
         color = arr.getColor(R.styleable.WheelView_color, Color.RED);
         menuColor = arr.getColor(R.styleable.WheelView_menuColor, Color.WHITE);
         menuTextColor = arr.getColor(R.styleable.WheelView_menuTextColor, Color.BLACK);
-        selectMenuTextColor = arr.getColor(R.styleable.WheelView_selectMenuColor, Color.GREEN);
+        selectedMenuColor = arr.getColor(R.styleable.WheelView_selectMenuColor, Color.GREEN);
         centerTextColor = arr.getColor(R.styleable.WheelView_centerTextColor, Color.BLACK);
-        menuTextSize = arr.getDimension(R.styleable.WheelView_menuTextSize, 12);
-        centerTextSize = arr.getDimension(R.styleable.WheelView_centerTextSize, 15);
-
+        menuTextSize = DisplayUtil.px2sp(getContext(), arr.getDimension(R.styleable.WheelView_menuTextSize, DisplayUtil.sp2px(getContext(), 12)));
+        centerTextSize = DisplayUtil.px2sp(getContext(), arr.getDimension(R.styleable.WheelView_centerTextSize, DisplayUtil.sp2px(getContext(), 20)));
         centerTextView = new TextView(getContext());
         centerTextView.setText(text);
+        centerTextView.setTextSize(centerTextSize);
         centerTextView.setGravity(Gravity.CENTER);
         addView(centerTextView);
         setWillNotDraw(false);
@@ -166,6 +170,12 @@ public class WheelView extends ViewGroup {
 
     }
 
+    /**
+     * 设置菜单内容
+     *
+     * @param texts
+     * @param imgs
+     */
     public void setMenu(String[] texts, int[] imgs) {
         this.menuString = texts;
         this.menuImg = imgs;
@@ -201,8 +211,9 @@ public class WheelView extends ViewGroup {
         View child = getChildAt(0);
         int childWidth = child.getMeasuredWidth();
         int childHeight = child.getMeasuredHeight();
+        //设置指示器文本位置
         child.layout((witdh - childWidth) / 2, (height - childHeight) / 2, (witdh + childWidth) / 2, (height + childHeight) / 2);
-        // 菜单中心距离父布局中心的距离
+        // 菜单中心距离父布局中心的距离,菜单中心所在圆半径
         int R = (int) ((witdh > height ? height / 2 : witdh / 2) * 0.7);
         int x = witdh > height ? height : witdh;
         for (int i = 0; i < num; i++) {
@@ -227,12 +238,6 @@ public class WheelView extends ViewGroup {
                 // 设置菜单位置
                 child.layout(potX - childWidth / 2, potY - childHeight / 2, potX + childWidth / 2, potY + childHeight / 2);
                 final int index = i;
-//                child.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        check(index);
-//                    }
-//                });
             }
         }
     }
@@ -256,12 +261,6 @@ public class WheelView extends ViewGroup {
         }
         // 旋转动画
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(WheelView.this, "angle", angle, angle2);
-
-//        // 计算颜色渐变顺序
-//        int tmp[] = getColors(angle, angle2);
-//        // 颜色渐变动画
-//        ObjectAnimator animator2 = ObjectAnimator.ofInt(MyView.this, "color", tmp);
-//        animator2.setEvaluator(new ArgbEvaluator());
         set.play(animator1);
         set.setDuration(rotateDuration);
         set.start();
@@ -300,17 +299,15 @@ public class WheelView extends ViewGroup {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.v("info", "ACTION_DOWN");
                 touchId = getCheckId(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.v("info", "ACTION_MOVE");
+                // 手指移出扇形时取消
                 if (getCheckId(x, y) != touchId) {
                     touchId = -1;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.v("info", "ACTION_UP");
                 if (getCheckId(x, y) == touchId && touchId != -1) {
                     check(touchId);
                 }
@@ -323,13 +320,24 @@ public class WheelView extends ViewGroup {
         return true;
     }
 
+    /**
+     * 获取选项id
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     private int getCheckId(float x, float y) {
 
         int index = -1;
+        // 中心点坐标
         int potX = witdh / 2;
         int potY = height / 2;
+
         int r = potX > potY ? potY : potX;
+        // r*r1_xishu是扇形的半径,r1是扇形拼成的大圆的半径,两者之间有delta偏移量
         int r1 = (int) (r * r1_xishu + delta);
+        // 指示器半径
         int r2 = (int) (r * r2_xishu);
 
         if (Math.pow(x - potX, 2) + Math.pow(y - potY, 2) < Math.pow(r1, 2)
@@ -339,41 +347,24 @@ public class WheelView extends ViewGroup {
             double r3 = Math.sqrt(Math.pow(delta_x, 2) + Math.pow(delta_y, 2));
             double sin = delta_y / r3;
             double cos = delta_x / r3;
+            //求arcsin反三角 0-2pi 会有两值
             double angel1 = (Math.asin(sin) + 2 * Math.PI) % (2 * Math.PI);
             double angel2 = (3 * Math.PI - angel1) % (2 * Math.PI);
             double selectAngel = 0;
+            // 利用cos确认 正确的角度值
             if (Math.cos(angel2) * cos > 0) {
                 selectAngel = angel2;
             } else if (Math.cos(angel1) * cos > 0) {
                 selectAngel = angel1;
             }
+            // 弧度转角度
             double selectAngel2 = (selectAngel * 180 / Math.PI);
-            index = (int) (selectAngel2 / (360 / (double) num) + 0.5)%num;
+            // 根据角度算id
+            index = (int) (selectAngel2 / (360 / (double) num) + 0.5) % num;
 
-
-            Log.v("info", "selectAngel2=" + selectAngel2);
         }
 
         return index;
-    }
-
-    private int[] getColors(float angle1, float angle2) {
-
-        // 颜色变化轨迹 从 raw>>raw2
-        int a = (int) (angle1 / (360.0 / num));
-        int b = (int) (angle2 / (360.0 / num));
-        int n = Math.abs(b - a);
-        int tmp[] = new int[n + 1];
-        for (int j = 0; j <= n; j++) {
-            if (a < b) {
-                tmp[j] = colors[(j + a) % num];
-            } else {
-                tmp[j] = colors[(a - j) % num];
-            }
-            // 如果连续两次点击,使得前后两次动画衔接.
-            tmp[0] = color;
-        }
-        return tmp;
     }
 
 
@@ -396,24 +387,28 @@ public class WheelView extends ViewGroup {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         int r = witdh > height ? height / 2 : witdh / 2;
+        // 扇形半径
         int r1 = (int) (r * r1_xishu);
+        // 指示器半径
         int r2 = (int) (r * r2_xishu);
-
         Paint paint = new Paint();
         paint.setStrokeWidth(3);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
         // 画扇形
-
         for (int i = 0; i < num; i++) {
+            // 默认颜色
             paint.setColor(menuColor);
+            // 按下的menu背景变色
             if (touchId == i) {
-                paint.setColor(selectMenuTextColor);
+                paint.setColor(selectedMenuColor);
             }
-//            paint.setColor(colors[i % 7]);
+            // 根据id计算弧度
             double pencent = (Math.PI * i / num * 2);
+            // 扇形圆心与控件中心的偏移量
             int deltaX = (int) (delta * Math.cos(pencent));
             int deltaY = (int) (delta * Math.sin(pencent));
+
             RectF oval = new RectF();                     //RectF对象
             oval.left = witdh / 2 - r1 + deltaX;
             oval.top = height / 2 - r1 + deltaY;
@@ -422,11 +417,12 @@ public class WheelView extends ViewGroup {
             canvas.drawArc(oval, (float) ((i - 0.5) / (float) num * 360), 1 / (float) num * 360, true, paint);
         }
         paint.setStyle(Paint.Style.FILL);//设置实心
+        // 设置为指示器颜色
         paint.setColor(color);
         // 画圆
-        canvas.drawCircle(witdh / 2, height / 2, (float) (r2 * 0.8), paint);
+        canvas.drawCircle(witdh / 2, height / 2, (float) (r2), paint);
         // 画三角形
-        canvas.drawPath(getTrianglePath(angle, r2), paint);
+        canvas.drawPath(getTrianglePath(angle, (int) (r2 / 0.8)), paint);
     }
 
 
@@ -436,7 +432,6 @@ public class WheelView extends ViewGroup {
      * @param canvas
      * @param text
      */
-
     private void paintText(Canvas canvas, String text) {
         //绘制文字
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -454,29 +449,38 @@ public class WheelView extends ViewGroup {
         canvas.drawText(text, baseX, baseline, textPaint);
     }
 
+    /**
+     * 计算三角形
+     *
+     * @param i 当前指示器指向的角度
+     * @param r 指示器圆的半径
+     * @return 三角形path
+     */
     private Path getTrianglePath(float i, int r) {
-//        Log.v("info", "i=" + i + ",r=" + r);
-        double a = Math.PI * i / 180;
+
+        //角度转弧度
+        double angel = Math.PI * i / 180;
         int pointX = witdh / 2;
         int pointY = height / 2;
 
-        //第一个点
-        double x1 = Math.cos(a) * r + pointX;
-        double y1 = Math.sin(a) * r + pointY;
+        //第一个点,指针尖角
+        double x1 = Math.cos(angel) * r + pointX;
+        double y1 = Math.sin(angel) * r + pointY;
 
-
+        //默认指针尖角60度
         double a1 = Math.PI * (i + 180 + 30) / 180;
         double a2 = Math.PI * (i + 180 - 30) / 180;
 
+        //三角形边长,边长不能太小,否则不能被圆覆盖住两角
+        double aa = 0.3 * r;
 
         //第二个点
-        double x2 = Math.cos(a1) * 0.3 * r + x1;
-        double y2 = Math.sin(a1) * 0.3 * r + y1;
+        double x2 = Math.cos(a1) * aa + x1;
+        double y2 = Math.sin(a1) * aa + y1;
 
         //第三个点
-        double x3 = Math.cos(a2) * 0.3 * r + x1;
-        double y3 = Math.sin(a2) * 0.3 * r + y1;
-
+        double x3 = Math.cos(a2) * aa + x1;
+        double y3 = Math.sin(a2) * aa + y1;
 
         Path path = new Path();
         path.moveTo((float) x1, (float) y1);
@@ -488,10 +492,21 @@ public class WheelView extends ViewGroup {
     }
 
 
+    /**
+     * 从当前颜色变化到 color2
+     *
+     * @param color2
+     */
     public void startColorAnimation(int color2) {
         startColorAnimation(color, color2);
     }
 
+    /**
+     * 从color1变化到 color2
+     *
+     * @param color1
+     * @param color2
+     */
     public void startColorAnimation(int color1, int color2) {
         int[] colors = new int[2];
         colors[0] = color1;
@@ -500,6 +515,11 @@ public class WheelView extends ViewGroup {
 
     }
 
+    /**
+     * 按颜色序列依次变化
+     *
+     * @param colors
+     */
     public void startColorAnimation(int[] colors) {
         if (colorAnimator != null) {
             colorAnimator.cancel();

@@ -8,18 +8,17 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.fjc.demo.MainActivity">
 
     <com.fjc.library.WheelView
-        android:id="@+id/myView"
+        android:id="@+id/wheelView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
+        app:centerTextSize="18sp"
         app:color="@color/red"
-        app:num="4"
-        app:text="选项1">
-
-    </com.fjc.library.WheelView>
+        app:menuTextSize="20dp"
+        app:num="5"
+        app:text="指示器" />
 </RelativeLayout>
