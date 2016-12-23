@@ -2,10 +2,12 @@
 
 > 转盘指示器
 
+![](./11.gif)
 
 
 ### 使用
 + 布局
+
  ```
  <com.fjc.library.WheelView
         android:id="@+id/wheelView"
@@ -17,6 +19,7 @@
         app:num="5"
         app:text="指示器" />
  ```
+
 + 属性
     - num: 选项数量
     - text: 指示器文本
@@ -28,6 +31,7 @@
     - menuTextSize: 选项文本字体大小
     - centerTextSize: 指示器文本字体大小
 + 代码
+
   ```
   //设置选择器菜单内容
   String[] strs = {"菜单1", "菜单2", "菜单3", "菜单4"};
